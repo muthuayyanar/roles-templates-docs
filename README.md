@@ -42,10 +42,9 @@ Playbook will be run on “localhost” and will not interact with router as thi
 Lab exercise #3 will demonstrate how the generated configuration can be uploaded to router using Ansible play/task.
 
 Name of the playbook: roles-basic-v1.yml
-                      ------------------
 
 Location of this playbook in the controller: /home/cisco/roles-templates
-                                            -----------------------------
+                                      
 
 
 1.On the ansible-controller, change directory to “/home/cisco/roles-templates/roles” and create a folder by the name “basic-v1” using mkdir command
