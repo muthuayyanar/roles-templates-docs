@@ -29,11 +29,13 @@ Aim: Teach how various components of Ansible Roles & Jinja2 Templates work toget
 
 Outcome of the playbook is to generate the below global cisco configuration for IOS running router using roles and jinja2 template.
 
-`
+```
+
 username alpha secret beta
 ntp server 9.9.9.9
 logging host 9.9.9.10
-`
+
+```
 
 Playbook will be run on “localhost” and will not interact with router as this playbook is to generate configuration offline.
 
@@ -48,27 +50,39 @@ Location of this playbook in the controller: /home/cisco/roles-templates
 
 Ensure “basic-v1” directory is created under “/home/cisco/roles-templates/roles” and change directory to “basic-v1” directory.
 
+```
 cisco@ansible-controller:~/roles-templates/roles$ pwd
 /home/cisco/roles-templates/roles
 cisco@ansible-controller:~/roles-templates/roles$ mkdir basic-v1
 cisco@ansible-controller:~/roles-templates/roles$ 
 
+```
+
 2.”pwd” command should show that you are in the below directory.
 
+```
 cisco@ansible-controller:~/roles-templates/roles/basic-v1$ pwd
 /home/cisco/roles-templates/roles/basic-v1
 cisco@ansible-controller:~/roles-templates/roles/basic-v1$ 
+
+```
 
 3.As part of roles and templates some directory structure + files are to be created as was covered in the lecture.
 
 Copy/paste the below command to create them (after making sure you are in directory “/home/cisco/roles-templates/roles/basic-v1”)
 
+```
+
 mkdir -p tasks templates vars; touch tasks/main.yml vars/main.yml templates/BASIC-v1.j2
+
+```
 
 4.After this run tree command to ensure you see the below directory structure.
 
 
 Remove above picture and use the below output so its easier to convert to md.
+
+```
 
 cisco@ansible-controller:~/roles-templates/roles/basic-v1$ pwd
 /home/cisco/roles-templates/roles/basic-v1
@@ -83,6 +97,8 @@ cisco@ansible-controller:~/roles-templates/roles/basic-v1$ tree
 
 3 directories, 3 files
 
+```
+
 5.Go to “/home/cisco/roles-templates” and create a playbook using a filename“roles-basic-v1.yml”.
 
 Use vi or your favorite editor to create the file. Please use the content given in the below box as a content for the playbook.
@@ -90,14 +106,15 @@ Use vi or your favorite editor to create the file. Please use the content given 
 
 Content for “roles-basic-v1.yml” file.
 
-`
+```
 ---
 - name: Demonstrate Basic Use case of Roles, Jinja2 Templating for configuration generation
   hosts: localhost
 
   roles:
    - basic-v1
-`
+
+```
 
 
 This playbook is run “locally” on the host and it just uses “roles” options and a “list” data structure with one element with the name “basic-v1”.
@@ -113,10 +130,15 @@ Ensure you are in “/home/cisco/roles-templates/roles/basic-v1” directory
 Change directory to “tasks” sub-folder
 
 This folder will have a file with name “main.yml”.
+
+```
+
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/tasks$ pwd
 /home/cisco/roles-templates/roles/basic-v1/tasks
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/tasks$ ls
 main.yml
+
+```
 
 Copy the content given in the below box as content for file “main.yml” and write/save.
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/tasks$ vi main.yml
@@ -125,13 +147,15 @@ Ensure the saved file has the below content by checking with more/cat command.
 
 Content for file “main.yml” in the sub-folder “tasks".
 
-`
+```
 ---
 - name: Use a Jinja2 template with paramaters to generate configurations using values provided by a vars file
   template: src=BASIC-v1.j2 dest=/home/cisco/roles-templates/cfg/BASIC-CFG-v1.txt
-`
+
+```
 
 “main.yml” file in the tasks sub-folder identifies the Jinja2 template that contains “configuration template” for this play book specified using “template” src option. 
+
 Output of the task will be written to the location given in the “dest” parameter.
 
 File #2: Content to be added under “templates” sub-folder
@@ -141,6 +165,10 @@ Ensure you are in “/home/cisco/roles-templates/roles/basic-v1” directory
 Change directory to “templates” sub-folder
 
 This folder will have a file with name “BASIC-v1.j2”.
+
+
+```
+
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/templates$ pwd
 /home/cisco/roles-templates/roles/basic-v1/templates
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/templates$ ls
@@ -149,15 +177,18 @@ BASIC-v1.j2
 Copy the content given in the below box as content for file “BASIC-v1.j2” and write/save.
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/templates$ vi BASIC-v1.j2 
 
+```
+
 Ensure the saved file has the below content by checking with more/cat command
 
 Content for file “BASIC-v1.j2” in the sub-folder templates
 
-`
+```
 username {{ user_name }} secret {{ password }}
 ntp server {{ ntp_server }}
 logging host {{ syslog_server }}
-`
+
+```
 
 Template file shows the parametrized configuration file. Parameters are shown inside double curly braces.
 
@@ -168,10 +199,15 @@ Ensure you are in “/home/cisco/roles-templates/roles/basic-v1” directory
 Change directory to “vars” sub-folder
 
 This folder will have a file with name “main.yml”.
+
+```
+
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/vars$ pwd
 /home/cisco/roles-templates/roles/basic-v1/vars
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/vars$ ls
 main.yml
+
+```
 
 Copy the content given in the below box as content for file “main.yml” and write/save.
 cisco@ansible-controller:~/roles-templates/roles/basic-v1/vars$ vi main.yml
@@ -180,13 +216,14 @@ Ensure the saved file has the below content by checking with more/cat command
 
 Content for file “main.yml in the sub-folder "vars".
 
-`
+```
 ---
 user_name: alpha
 password: beta
 ntp_server: 9.9.9.9
 syslog_server: 9.9.9.10
-`
+
+```
 
 Vars file contains all values for parameters given in the Jinja2 template
 
@@ -196,13 +233,15 @@ ls -ltr ~/roles-templates/cfg
 
 8.Run the playbook using the below command (running in verbose mode with -vvv is optional) from directory “/home/cisco/roles-templates”
 
+```
 cisco@ansible-controller:~/roles-templates$ ansible-playbook roles-basic-v1.yml --syntax-check
 cisco@ansible-controller:~/roles-templates$ ansible-playbook roles-basic-v1.yml -v
 
+```
 
 9.Confirm that playbook runs with no errors and check a file with name “BASIC-CFG-v1.txt” has been created in the directory ~/roles-templates/cfg
 
-`
+```
 cisco@ansible-controller:~/roles-templates$ ls -ltr ~/roles-templates/cfg
 total 4
 -rw-rw-r-- 1 cisco cisco 69 Apr 27 02:19 BASIC-CFG-v1.txt
@@ -211,11 +250,10 @@ cisco@ansible-controller:~/roles-templates$ more ~/roles-templates/cfg/BASIC-CFG
 username alpha secret beta
 ntp server 9.9.9.9
 logging host 9.9.9.10
-`
+
+```
 
 *******This concludes lab exercise #1*********
-
-
 
 Lab Exercise #2: Roles & Templates – With Loop
 ==============================================
